@@ -57,6 +57,10 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/counselors', counselorRoutes);
 
+// Mount assessment routes
+const assessmentRoutes = require('./routes/assessment');
+app.use('/api/assessment', assessmentRoutes);
+
 // Database connection
 if (!process.env.MONGODB_URI) {
   console.error('MONGODB_URI is not set in environment variables');

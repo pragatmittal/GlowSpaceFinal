@@ -22,6 +22,7 @@ import AppointmentConfirmed from './pages/AppointmentConfirmed';
 import VideoCall from './pages/VideoCall';
 import ChatRoom from './pages/ChatRoom';
 import EmotionDetector from './components/EmotionDetector';
+import Assessment from './pages/Assessment';
 
 // Google Client ID
 console.log('Environment variables:', process.env);
@@ -60,6 +61,7 @@ const App = () => {
               <Route path="/video-call/:roomId" element={<VideoCall />} />
               <Route path="/chat/:roomId" element={<ChatRoom />} />
               <Route path="/emotion-detection" element={<EmotionDetector />} />
+              <Route path="/assessment" element={<Assessment />} />
             </Routes>
             <ToastContainer
               position="top-right"
