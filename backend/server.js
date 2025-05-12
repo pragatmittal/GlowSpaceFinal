@@ -17,6 +17,9 @@ const emotionRoutes = require('./routes/emotion.routes');
 const appointmentRoutes = require('./routes/appointment.routes');
 const videoRoutes = require('./routes/video.routes');
 const counselorRoutes = require('./routes/counselor.routes');
+const moodRoutes = require('./routes/mood.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const profileRoutes = require('./routes/profile.routes');
 
 // Config
 const app = express();
@@ -56,6 +59,9 @@ app.use('/api/emotions', emotionRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/counselors', counselorRoutes);
+app.use('/api/moods', moodRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Mount assessment routes
 const assessmentRoutes = require('./routes/assessment');

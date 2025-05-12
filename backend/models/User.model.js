@@ -47,7 +47,17 @@ const userSchema = new mongoose.Schema({
   following: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  preferences: {
+    darkMode: {
+      type: Boolean,
+      default: false
+    },
+    notificationOptIn: {
+      type: Boolean,
+      default: false
+    }
+  }
 }, {
   timestamps: true
 });

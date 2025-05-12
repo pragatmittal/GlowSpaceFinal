@@ -23,6 +23,10 @@ import VideoCall from './pages/VideoCall';
 import ChatRoom from './pages/ChatRoom';
 import EmotionDetector from './components/EmotionDetector';
 import Assessment from './pages/Assessment';
+import MoodTracker from './pages/MoodTracker';
+import MoodHistory from './pages/MoodHistory';
+import Analytics from './pages/Analytics';
+import ProfilePreferences from './pages/ProfilePreferences';
 
 // Google Client ID
 console.log('Environment variables:', process.env);
@@ -62,6 +66,30 @@ const App = () => {
               <Route path="/chat/:roomId" element={<ChatRoom />} />
               <Route path="/emotion-detection" element={<EmotionDetector />} />
               <Route path="/assessment" element={<Assessment />} />
+              <Route
+                path="/mood-tracker"
+                element={
+                  <ProtectedRoute>
+                    <MoodTracker />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Analytics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile/preferences"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePreferences />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
             <ToastContainer
               position="top-right"
