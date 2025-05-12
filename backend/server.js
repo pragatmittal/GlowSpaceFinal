@@ -127,7 +127,20 @@ app.get('/', (req, res) => {
   res.json({
     status: 'success',
     message: 'GlowSpace API is running',
-    version: '1.0.0'
+    version: '1.0.0',
+    endpoints: [
+      { path: '/api/auth', description: 'Authentication (register, login, password reset, Google OAuth)' },
+      { path: '/api/users', description: 'User management' },
+      { path: '/api/posts', description: 'Posts and content' },
+      { path: '/api/chat', description: 'Chat and messaging' },
+      { path: '/api/emotions', description: 'Emotion detection' },
+      { path: '/api/appointments', description: 'Appointments and scheduling' },
+      { path: '/api/video', description: 'Video call features' },
+      { path: '/api/counselors', description: 'Counselor management' },
+      { path: '/api/assessment/trauma', method: 'POST', description: 'Analyze trauma history text' },
+      { path: '/api/assessment/medication', method: 'POST', description: 'Analyze medication history text' },
+      { path: '/api/assessment/voice', method: 'POST', description: 'Analyze voice input (audio)' },
+    ]
   });
 });
 
