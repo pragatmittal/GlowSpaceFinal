@@ -90,6 +90,14 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/moodhistory"
+                element={
+                  <ProtectedRoute>
+                    <MoodHistory />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
             <ToastContainer
               position="top-right"

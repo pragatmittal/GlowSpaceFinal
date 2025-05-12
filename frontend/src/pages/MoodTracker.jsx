@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
 
@@ -19,7 +19,38 @@ const MoodTracker = () => {
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [lottieData, setLottieData] = useState(null);
+  const [lottieGrid, setLottieGrid] = useState({});
   const navigate = useNavigate();
+
+  // Fetch Lottie JSON for selected mood
+  useEffect(() => {
+    if (selectedMood) {
+      fetch(selectedMood.url)
+        .then(res => res.json())
+        .then(setLottieData)
+        .catch(() => setLottieData(null));
+    } else {
+      setLottieData(null);
+    }
+  }, [selectedMood]);
+
+  // Fetch Lottie JSON for grid moods (on mount)
+  useEffect(() => {
+    const fetchAll = async () => {
+      const gridData = {};
+      await Promise.all(moods.map(async (mood) => {
+        try {
+          const res = await fetch(mood.url);
+          gridData[mood.value] = await res.json();
+        } catch {
+          gridData[mood.value] = null;
+        }
+      }));
+      setLottieGrid(gridData);
+    };
+    fetchAll();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +100,7 @@ const MoodTracker = () => {
                 onClick={() => setSelectedMood(mood)}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
-                  <Lottie animationData={mood.url} loop={true} />
+                  {lottieGrid[mood.value] ? <Lottie animationData={lottieGrid[mood.value]} loop={true} /> : <span>Loading...</span>}
                 </div>
                 <span className="mt-2 text-sm font-medium">{mood.label}</span>
               </button>
@@ -91,6 +122,15 @@ const MoodTracker = () => {
             {loading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
+        {/* Preview selected mood animation */}
+        {selectedMood && lottieData && (
+          <div className="flex flex-col items-center mt-6">
+            <div className="w-32 h-32">
+              <Lottie animationData={lottieData} loop={true} />
+            </div>
+            <div className="mt-2 text-lg font-semibold capitalize">{selectedMood.label}</div>
+          </div>
+        )}
       </div>
     </div>
   );

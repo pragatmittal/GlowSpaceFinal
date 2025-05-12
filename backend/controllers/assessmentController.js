@@ -46,6 +46,11 @@ exports.analyzeMedication = (req, res) => {
   });
   // Cap score at 40
   if (score > 40) score = 40;
+  // If no keywords found, give a default score and suggestion
+  if (score === 0) {
+    score = 5;
+    hints.push("No specific psychiatric medications recognized. If you are taking any, please mention their names (e.g., Zoloft, Xanax, Prozac, etc.). For general medication history, consult your healthcare provider for a full review.");
+  }
   res.json({ score, found, hints });
 };
 

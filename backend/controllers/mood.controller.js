@@ -11,13 +11,20 @@ exports.getAllMoods = async (req, res) => {
   }
 };
 
+// Helper to get UTC start and end of a date string (YYYY-MM-DD)
+function getUTCDateRange(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) return [null, null];
+  const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+  const end = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999));
+  return [start, end];
+}
+
 // Get mood by date (YYYY-MM-DD)
 exports.getMoodByDate = async (req, res) => {
   try {
-    const date = new Date(req.params.date);
-    if (isNaN(date)) return res.status(400).json({ error: 'Invalid date' });
-    const start = new Date(date.setHours(0,0,0,0));
-    const end = new Date(date.setHours(23,59,59,999));
+    const [start, end] = getUTCDateRange(req.params.date);
+    if (!start) return res.status(400).json({ error: 'Invalid date' });
     const mood = await Mood.findOne({ userId: req.user._id, date: { $gte: start, $lte: end } });
     if (!mood) return res.status(404).json({ error: 'Mood not found for this date' });
     res.json(mood);
@@ -55,10 +62,8 @@ exports.addMood = async (req, res) => {
 exports.editMood = async (req, res) => {
   try {
     const { moodType, emojiURL, notes } = req.body;
-    const date = new Date(req.params.date);
-    if (isNaN(date)) return res.status(400).json({ error: 'Invalid date' });
-    const start = new Date(date.setHours(0,0,0,0));
-    const end = new Date(date.setHours(23,59,59,999));
+    const [start, end] = getUTCDateRange(req.params.date);
+    if (!start) return res.status(400).json({ error: 'Invalid date' });
     const mood = await Mood.findOne({ userId: req.user._id, date: { $gte: start, $lte: end } });
     if (!mood) return res.status(404).json({ error: 'Mood not found for this date' });
     if (moodType) mood.moodType = moodType;

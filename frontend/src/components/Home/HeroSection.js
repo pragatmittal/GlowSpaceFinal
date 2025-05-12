@@ -49,9 +49,9 @@ const HeroSection = () => {
           <div className="w-full lg:w-1/2 relative">
             <div className="animate-float">
               <img 
-                src="/images/hero-illustration.jpg" 
-                alt="Mental Health Illustration" 
-                className="w-full h-auto"
+                src="/images/vecteezy_mental-health-concept-and-man-meditating-with-health-icons_17450622.jpg" 
+                alt="Mental Health Concept and Man Meditating - Vecteezy"
+                className="w-full h-auto rounded-2xl shadow-xl border border-gray-200 object-cover"
                 onError={handleImageError}
               />
             </div>

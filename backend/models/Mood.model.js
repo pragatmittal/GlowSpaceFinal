@@ -21,10 +21,12 @@ const moodSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    unique: true // One mood per date per user
   }
 }, {
   timestamps: true
 });
+
+// Add compound index for userId + date
+moodSchema.index({ userId: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model('Mood', moodSchema); 

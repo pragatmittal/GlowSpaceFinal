@@ -1,6 +1,7 @@
 {
   "name": "glowspace-frontend",
   "version": "0.1.0",
+  "proxy": "http://localhost:5001",
   "private": true,
   "dependencies": {
     "@jitsi/react-sdk": "^1.4.4",
