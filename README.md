@@ -27,13 +27,6 @@
 
 ---
 
-## 🖼️ Screenshots
-| Home | Chat | Mood Tracker | Video Call |
-|------|------|--------------|------------|
-| ![](frontend/src/assets/images/Healing.jpg) | ![](frontend/public/images/consultation-hero.avif) | ![](frontend/src/assets/images/contact-us.jpg) | ![](frontend/public/images/vecteezy_mental-health-concept-and-man-meditating-with-health-icons_17450622.jpg) |
-
----
-
 ## 📂 Folder Structure
 ```
 GlowSpaceFinal/
