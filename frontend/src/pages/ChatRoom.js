@@ -19,6 +19,7 @@ const ChatRoom = () => {
   const [message, setMessage] = useState('');
   const [participants, setParticipants] = useState([]);
   const [userId, setUserId] = useState('');
+  const [username, setUsername] = useState('');
   const [copied, setCopied] = useState(false);
   const socketRef = useRef();
   const messagesEndRef = useRef();
@@ -28,29 +29,32 @@ const ChatRoom = () => {
       navigate('/chat/global');
       return;
     }
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username') || 'Guest';
+    // Always join as guest
     socketRef.current = io('http://localhost:5001', {
-      auth: { token: token || null },
       transports: ['websocket'],
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
     });
     socketRef.current.on('connect', () => {
-      setUserId(socketRef.current.id);
-      socketRef.current.emit('joinRoom', { username, room: roomId });
+      // Join the room as guest (username will be assigned by backend)
+      socketRef.current.emit('joinRoom', { room: roomId });
     });
-    socketRef.current.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
+    socketRef.current.on('roomJoined', ({ userId, username, participants }) => {
+      setUserId(userId);
+      setUsername(username);
+      setParticipants(Array.isArray(participants) ? participants : []);
     });
     socketRef.current.on('chatHistory', ({ messages, participants }) => {
-      setMessages(messages);
+      setMessages(messages.map(msg => ({
+        ...msg,
+        senderId: msg.senderId || msg.sender // for compatibility
+      })));
       setParticipants(Array.isArray(participants) ? participants : []);
       scrollToBottom();
     });
-    socketRef.current.on('groupMessage', (message) => {
-      setMessages(prev => [...prev, message]);
+    socketRef.current.on('chatMessage', (msg) => {
+      setMessages(prev => [...prev, { ...msg, senderId: msg.senderId }]);
       scrollToBottom();
     });
     socketRef.current.on('updateParticipants', (updatedParticipants) => {
@@ -87,15 +91,16 @@ const ChatRoom = () => {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
+    // Optimistically add the message to the chat
     const newMessage = {
-      id: uuidv4(),
-      content: message,
-      sender: userId,
-      senderName: localStorage.getItem('username') || 'Guest',
+      senderId: userId,
+      username: username,
+      message: message,
       timestamp: new Date().toISOString(),
       room: roomId
     };
-    socketRef.current.emit('groupMessage', newMessage);
+    setMessages(prev => [...prev, newMessage]);
+    socketRef.current.emit('chatMessage', { room: roomId, message });
     setMessage('');
   };
 
@@ -155,25 +160,25 @@ const ChatRoom = () => {
         <div className="flex-1 overflow-y-auto p-6 bg-black">
           {messages.map((msg, idx) => (
             <div
-              key={msg.id || idx}
-              className={`mb-6 flex ${msg.sender === userId ? 'justify-end' : 'justify-start'}`}
+              key={msg._id || msg.id || idx}
+              className={`mb-6 flex ${msg.senderId === userId ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-lg p-4 rounded-2xl shadow-lg ${
                   msg.type === 'system'
                     ? 'bg-gray-700 text-gray-200 italic'
-                    : msg.sender === userId
+                    : msg.senderId === userId
                     ? 'bg-blue-700 text-white'
                     : 'bg-gray-800 text-white'
                 }`}
               >
                 {msg.type !== 'system' && (
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-sm">{msg.senderName || 'Guest'}</span>
+                    <span className="font-semibold text-sm">{msg.username || 'Guest'}</span>
                     <span className="text-xs opacity-60">{new Date(msg.timestamp).toLocaleTimeString()}</span>
                   </div>
                 )}
-                <div className="text-base">{msg.content}</div>
+                <div className="text-base">{msg.message || msg.content}</div>
               </div>
             </div>
           ))}
